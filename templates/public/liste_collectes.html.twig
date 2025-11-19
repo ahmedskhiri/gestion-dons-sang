@@ -1,0 +1,68 @@
+{# templates/public/liste_collectes.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Collectes{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Liste des Collectes</h1>
+
+    {# Le PDF demande des filtres. On les prépare. #}
+   {# templates/public/liste_collectes.html.twig #}
+
+<form method="GET" action="{{ path('app_collectes_liste') }}" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="lieu" class="form-label">Filtrer par lieu :</label>
+            
+            {# Le menu déroulant #}
+            <select name="lieu" id="lieu" class="form-select" onchange="this.form.submit()">
+                
+                <option value="">-- Tous les lieux --</option>
+                
+                {# On boucle sur les lieux envoyés par le contrôleur #}
+                {% for lieu in lieux %}
+                    <option value="{{ lieu.id }}" {{ lieu.id == lieuFiltreId ? 'selected' : '' }}>
+                        {{ lieu.nomLieu }} ({{ lieu.ville }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        {# Un bouton pour réinitialiser #}
+        <div class="col-md-4" style="margin-top: 32px;"> {# J'ajoute un style pour aligner, ton collègue du front-end corrigera :) #}
+            <a href="{{ path('app_collectes_liste') }}" class="btn btn-secondary">
+                Réinitialiser
+            </a>
+        </div>
+    </div>
+</form>
+    <hr>
+
+    <div class="row">
+        {% for collecte in collectes %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Statut : {{ collecte.statut }}
+                        </h6>
+                        <p class="card-text">
+                            <strong>Lieu :</strong> {{ collecte.lieu.nomLieu }} ({{ collecte.lieu.ville }}) <br>
+                            <strong>Début :</strong> {{ collecte.dateDebut|date('d/m/Y H:i') }} <br>
+                            <strong>Fin :</strong> {{ collecte.dateFin|date('d/m/Y H:i') }}
+                        </p>
+                        <a href="#" class="btn btn-success">Prendre RDV</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p>Aucune collecte trouvée.</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <a href="{{ path('app_Acceuil') }}" class="btn btn-primary">&larr; Retour à l'accueil</a>
+</div>
+{% endblock %}

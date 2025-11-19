@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Créer un compte Donateur</h3>
+                </div>
+                <div class="card-body">
+                    {{ form_errors(registrationForm) }}
+
+                    {{ form_start(registrationForm) }}
+                        
+                        {# Email #}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.email, {
+                                'attr': {'class': 'form-control'}
+                            }) }}
+                        </div>
+
+                        {# Nom et Prénom sur la même ligne #}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.nom, {
+                                    'label': 'Nom',
+                                    'attr': {'class': 'form-control'}
+                                }) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(registrationForm.prenom, {
+                                    'label': 'Prénom',
+                                    'attr': {'class': 'form-control'}
+                                }) }}
+                            </div>
+                        </div>
+
+                        {# Groupe Sanguin #}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.groupeSanguin, {
+                                'label': 'Groupe Sanguin',
+                                'attr': {'class': 'form-select'}
+                            }) }}
+                        </div>
+
+                        {# Mot de passe #}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.plainPassword, {
+                                'label': 'Mot de passe',
+                                'attr': {'class': 'form-control'}
+                            }) }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 btn-lg">S'inscrire</button>
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ path('app_login') }}">J'ai déjà un compte</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
