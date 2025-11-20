@@ -1,0 +1,64 @@
+{# templates/public/stocks.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Baromètre des Stocks{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Baromètre des Stocks</h1>
+    <p>État actuel des réserves de sang.</p>
+
+    <table class="table table-striped table-responsive">
+        <thead class="thead-dark">
+            <tr>
+                <th>Groupe Sanguin</th>
+                <th>Niveau Actuel (unités)</th>
+                <th>Visualisation</th>
+                <th>Niveau d'Alerte</th>
+                <th>Dernière MàJ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {# On boucle sur les stocks envoyés par le contrôleur #}
+            {% for stock in stocks %}
+                <tr>
+                    <td class="font-weight-bold">{{ stock.groupeSanguin }}</td>
+                    <td>{{ stock.niveauActuel }}</td>
+                    
+                    {# Partie pour les Progress Bars  #}
+                    <td>
+                        {% set pourcentage = (stock.niveauActuel / stock.niveauAlerte) * 50 %}
+                        {% set couleur = 'success' %} {# Vert par défaut #}
+                        
+                        {% if pourcentage < 100 %}
+                            {% set couleur = 'warning' %} {# Jaune #}
+                        {% endif %}
+                        {% if pourcentage < 50 %}
+                            {% set couleur = 'danger' %} {# Rouge #}
+                        {% endif %}
+
+                        <div class="progress">
+                            <div class="progress-bar bg-{{ couleur }}" 
+                                 role="progressbar" 
+                                 style="width: {{ min(pourcentage, 100) }}%" 
+                                 aria-valuenow="{{ pourcentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>{{ stock.niveauAlerte }}</td>
+                    <td>{{ stock.derniereMiseAJour|date('d/m/Y H:i') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucune donnée de stock disponible.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_Acceuil') }}" class="btn btn-primary">&larr; Retour à l'accueil</a>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{# templates/public/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Gestion des Dons de Sang{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Bienvenue sur le site de Gestion des Dons de Sang !</h1>
+
+    {# Le PDF demande un Carrousel, on le met en placeholder pour l'instant #}
+    <div class="alert alert-info" role="alert">
+      [ICI : Carrousel de campagnes]
+    </div>
+
+    {# Le PDF demande des liens clairs #}
+    <div class="mb-3">
+        <a href="{{ path('app_register') }}" class="btn btn-primary">Inscription</a>
+        <a href="{{ path('app_login') }}" class="btn btn-secondary">Connexion</a>
+        <a href="{{ path('app_stocks') }}" class="btn btn-danger">Voir les Stocks</a> {# On prépare le lien pour la future page /stocks #}
+        <a href="{{ path('app_collectes_liste') }}" class="btn btn-info">Voir toutes les collectes</a>
+    </div>
+
+    <hr>
+
+    {# Le PDF demande les prochaines collectes sous forme de Cards #}
+    <h2>Prochaines Collectes</h2>
+    
+    <div class="row">
+        {# On fait une boucle sur les collectes envoyées par le contrôleur #}
+        {% for collecte in collectes %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ collecte.nom }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Statut : {{ collecte.statut }}
+                        </h6>
+                        <p class="card-text">
+                            <strong>Lieu :</strong> {{ collecte.lieu.nomLieu }} ({{ collecte.lieu.ville }}) <br>
+                            <strong>Début :</strong> {{ collecte.dateDebut|date('d/m/Y H:i') }} <br>
+                            <strong>Fin :</strong> {{ collecte.dateFin|date('d/m/Y H:i') }}
+                        </p>
+                        <a href="#" class="btn btn-success">Prendre RDV</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p>Aucune collecte planifiée pour le moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
