@@ -43,10 +43,8 @@ final class DonateurController extends AbstractController
         $nextRendezVous = $rendezVousRepository->createQueryBuilder('r')
             ->where('r.donateur = :donateur')
             ->andWhere('r.statut IN (:statuts_actifs)') 
-            ->setParameters([
-                'donateur' => $donateur->getId(),
-                'statuts_actifs' => ['Confirmé', 'Planifié']
-            ])
+            ->setParameter('donateur', $donateur->getId())
+            ->setParameter('statuts_actifs', ['Confirmé', 'Planifié'])
             ->orderBy('r.dateHeureDebut', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
