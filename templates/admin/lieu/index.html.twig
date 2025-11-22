@@ -1,0 +1,58 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des Lieux{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Gestion des Lieux</h1>
+    <a href="{{ path('app_admin_lieu_new') }}" class="btn btn-primary">Nouveau Lieu</a>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Adresse</th>
+                    <th>Ville</th>
+                    <th>Code Postal</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lieu in lieux %}
+                    <tr>
+                        <td>{{ lieu.id }}</td>
+                        <td>{{ lieu.nomLieu }}</td>
+                        <td>{{ lieu.adresse }}</td>
+                        <td>{{ lieu.ville }}</td>
+                        <td>{{ lieu.codePostal }}</td>
+                        <td>
+                            <a href="{{ path('app_admin_lieu_show', {'id': lieu.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                            <a href="{{ path('app_admin_lieu_edit', {'id': lieu.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                            <form method="post" action="{{ path('app_admin_lieu_delete', {'id': lieu.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce lieu ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ lieu.id) }}">
+                                <button class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun lieu trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

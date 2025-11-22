@@ -1,0 +1,77 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Valider un Don{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Valider un Don</h1>
+    <a href="{{ path('app_admin_don_valider') }}" class="btn btn-secondary">Retour à la liste</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Informations du Rendez-vous</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>ID Rendez-vous</th>
+                            <td>{{ rendezVous.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Donateur</th>
+                            <td>{{ rendezVous.donateur.nom }} {{ rendezVous.donateur.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ rendezVous.donateur.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Groupe Sanguin</th>
+                            <td>{{ rendezVous.donateur.groupeSanguin }}</td>
+                        </tr>
+                        <tr>
+                            <th>Collecte</th>
+                            <td>{{ rendezVous.collecte.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date/Heure</th>
+                            <td>{{ rendezVous.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Statut</th>
+                            <td><span class="badge bg-success">{{ rendezVous.statut }}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Formulaire de Validation</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                    {{ form_row(form.typeDon) }}
+                    {{ form_row(form.quantite) }}
+                    <div class="mb-3">
+                        {{ form_row(form.apte) }}
+                    </div>
+                    {{ form_row(form.commentaire) }}
+                    <div class="alert alert-info">
+                        <small><strong>Note:</strong> La date de dernier don du donateur sera automatiquement mise à jour après validation.</small>
+                    </div>
+                    <button type="submit" class="btn btn-success">Valider le Don</button>
+                    <a href="{{ path('app_admin_don_valider') }}" class="btn btn-secondary">Annuler</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,59 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails de la Collecte{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Détails de la Collecte</h1>
+    <div>
+        <a href="{{ path('app_admin_collecte_edit', {'id': collecte.id}) }}" class="btn btn-warning">Modifier</a>
+        <a href="{{ path('app_admin_collecte_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ collecte.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ collecte.nom }}</td>
+                </tr>
+                <tr>
+                    <th>Date Début</th>
+                    <td>{{ collecte.dateDebut|date('d/m/Y H:i') }}</td>
+                </tr>
+                <tr>
+                    <th>Date Fin</th>
+                    <td>{{ collecte.dateFin|date('d/m/Y H:i') }}</td>
+                </tr>
+                <tr>
+                    <th>Capacité Maximale</th>
+                    <td>{{ collecte.capaciteMaximale }}</td>
+                </tr>
+                <tr>
+                    <th>Statut</th>
+                    <td>
+                        <span class="badge bg-{{ collecte.statut == 'Terminée' ? 'secondary' : 'primary' }}">
+                            {{ collecte.statut }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Lieu</th>
+                    <td>{{ collecte.lieu.nomLieu }} - {{ collecte.lieu.ville }}</td>
+                </tr>
+                <tr>
+                    <th>Rendez-vous</th>
+                    <td>{{ collecte.rendezVouses|length }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

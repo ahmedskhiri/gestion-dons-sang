@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouvelle Collecte{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Nouvelle Collecte</h1>
+    <a href="{{ path('app_admin_collecte_index') }}" class="btn btn-secondary">Retour à la liste</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.dateDebut) }}
+            {{ form_row(form.dateFin) }}
+            {{ form_row(form.capaciteMaximale) }}
+            {{ form_row(form.statut) }}
+            {{ form_row(form.lieu) }}
+            <button type="submit" class="btn btn-primary">Créer</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+

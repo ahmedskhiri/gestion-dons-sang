@@ -1,0 +1,47 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails du Lieu{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Détails du Lieu</h1>
+    <div>
+        <a href="{{ path('app_admin_lieu_edit', {'id': lieu.id}) }}" class="btn btn-warning">Modifier</a>
+        <a href="{{ path('app_admin_lieu_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ lieu.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ lieu.nomLieu }}</td>
+                </tr>
+                <tr>
+                    <th>Adresse</th>
+                    <td>{{ lieu.adresse }}</td>
+                </tr>
+                <tr>
+                    <th>Ville</th>
+                    <td>{{ lieu.ville }}</td>
+                </tr>
+                <tr>
+                    <th>Code Postal</th>
+                    <td>{{ lieu.codePostal }}</td>
+                </tr>
+                <tr>
+                    <th>Collectes</th>
+                    <td>{{ lieu.collectes|length }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
