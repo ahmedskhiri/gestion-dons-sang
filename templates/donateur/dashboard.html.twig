@@ -1,0 +1,81 @@
+{# templates/donateur/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Tableau de Bord{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Tableau de Bord Donateur</h1>
+    <hr>
+    
+    {# Affichage des messages flash pour confirmation/erreur #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <div class="row">
+        
+        {# --- Carte d'Éligibilité --- #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-{{ eligibility.eligible ? 'success' : 'warning' }} text-white">
+                    <h5 class="mb-0">Calcul d'Éligibilité</h5>
+                </div>
+                <div class="card-body">
+                    {# Utilisation de eligibility.message #}
+                    <p class="card-text">{{ eligibility.message }}</p> 
+                    {% if eligibility.eligible %}
+                        <a href="{{ path('app_collectes_liste') }}" class="btn btn-primary">Prendre un nouveau RDV</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {# --- Carte Prochain Rendez-vous --- #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Prochain Rendez-vous</h5>
+                </div>
+                <div class="card-body">
+                    {# Utilisation de nextRendezVous #}
+                    {% if nextRendezVous %} 
+                        <h6 class="card-subtitle mb-2 text-muted">Statut: {{ nextRendezVous.statut }}</h6>
+                        <p class="card-text">
+                            <strong>Collecte:</strong> {{ nextRendezVous.collecte.nom }} <br>
+                            <strong>Lieu:</strong> {{ nextRendezVous.collecte.lieu.nomLieu }} ({{ nextRendezVous.collecte.lieu.ville }}) <br>
+                            <strong>Date:</strong> {{ nextRendezVous.dateHeureDebut|date('d/m/Y') }} à {{ nextRendezVous.dateHeureDebut|date('H:i') }}
+                        </p>
+
+                        {# Bouton Annuler avec la bonne route et méthode POST #}
+                        {% if nextRendezVous.statut == 'Planifiée' or nextRendezVous.statut == 'Confirmé' %}
+                            <form method="post" action="{{ path('app_donateur_rdv_cancel', {'id': nextRendezVous.id}) }}" onsubmit="return confirm('Êtes-vous sûr(e) de vouloir annuler ce rendez-vous?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('rdv_cancel_' ~ nextRendezVous.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Annuler le RDV</button>
+                            </form>
+                        {% else %}
+                             <p class="text-muted">Ce rendez-vous est {{ nextRendezVous.statut|lower }}.</p>
+                        {% endif %}
+
+                    {% else %}
+                        <p class="card-text">Aucun rendez-vous planifié pour le moment.</p>
+                        <a href="{{ path('app_collectes_liste') }}" class="btn btn-primary">Voir les collectes</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Historique</h2>
+    <div class="mb-3">
+        <a href="{{ path('app_donateur_historique') }}" class="btn btn-secondary">
+            Voir mon Historique de Dons
+        </a>
+    </div>
+
+    <p class="mt-5"><a href="{{ path('app_Acceuil') }}" class="btn btn-link">&larr; Retour à l'accueil</a></p>
+</div>
+{% endblock %}

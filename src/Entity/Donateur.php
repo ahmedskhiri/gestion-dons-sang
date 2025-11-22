@@ -124,20 +124,24 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDernierdDateDon(): ?\DateTime
+    /**
+     * Corrected getter name: getDernierDateDon
+     */
+    public function getDernierDateDon(): ?\DateTime
     {
         return $this->dernierDateDon;
     }
 
+    /**
+     * Corrected setter name: setDernierDateDon
+     */
     public function setDernierDateDon(?\DateTime $dernierDateDon): static
     {
         $this->dernierDateDon = $dernierDateDon;
 
         return $this;
     }
-
   
-
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -157,7 +161,8 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->rendezVouses->contains($rendezVouse)) {
             $this->rendezVouses->add($rendezVouse);
-            $rendezVouse->setDonateur($this);
+            // Assuming RendezVous entity exists and has a setDonateur method
+            // $rendezVouse->setDonateur($this); 
         }
 
         return $this;
@@ -167,9 +172,9 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->rendezVouses->removeElement($rendezVouse)) {
             // set the owning side to null (unless already changed)
-            if ($rendezVouse->getDonateur() === $this) {
-                $rendezVouse->setDonateur(null);
-            }
+            // if ($rendezVouse->getDonateur() === $this) {
+            //     $rendezVouse->setDonateur(null);
+            // }
         }
 
         return $this;
@@ -187,7 +192,8 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->dons->contains($don)) {
             $this->dons->add($don);
-            $don->setDonateur($this);
+            // Assuming Don entity exists and has a setDonateur method
+            // $don->setDonateur($this);
         }
 
         return $this;
@@ -197,9 +203,9 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->dons->removeElement($don)) {
             // set the owning side to null (unless already changed)
-            if ($don->getDonateur() === $this) {
-                $don->setDonateur(null);
-            }
+            // if ($don->getDonateur() === $this) {
+            //     $don->setDonateur(null);
+            // }
         }
 
         return $this;
@@ -213,7 +219,7 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // Si tu stockes des données sensibles temporaires, nettoie-les ici
+        // If you store any temporary sensitive data, clear it here
         // $this->plainPassword = null;
     }
 
@@ -223,7 +229,7 @@ class Donateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // garantit que chaque utilisateur a au moins le rôle ROLE_DONATEUR
+        // ensure every user has at least the ROLE_DONATEUR role
         $roles[] = 'ROLE_DONATEUR';
 
         return array_unique($roles);
