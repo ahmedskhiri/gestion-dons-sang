@@ -1,11 +1,16 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block title %}Modifier le Lieu{% endblock %}
 
-{% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Modifier le Lieu</h1>
-    <a href="{{ path('app_admin_lieu_index') }}" class="btn btn-secondary">Retour à la liste</a>
+{% block page_title %}
+    <i class="bi bi-pencil-square"></i> Modifier le Lieu
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('app_admin_lieu_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
 </div>
 
 <div class="card">
@@ -19,5 +24,5 @@
         {{ form_end(form) }}
     </div>
 </div>
-{% endblock %}
+{% endblock dashboard_content %}
 

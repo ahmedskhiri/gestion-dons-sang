@@ -1,67 +1,125 @@
-{% extends 'base.html.twig' %}
+{% extends 'layouts/auth_layout.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Inscription - Gestion des Dons de Sang{% endblock %}
 
-{% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Créer un compte Donateur</h3>
-                </div>
-                <div class="card-body">
-                    {{ form_errors(registrationForm) }}
+{% block auth_content %}
+    <!-- Logo/Header -->
+    <div class="text-center mb-4">
+        <i class="bi bi-heart-pulse-fill text-danger" style="font-size: 3rem;"></i>
+        <h2 class="mt-3 mb-1 fw-bold">Inscription</h2>
+        <p class="text-muted">Créez votre compte donateur</p>
+    </div>
 
-                    {{ form_start(registrationForm) }}
-                        
-                        {# Email #}
-                        <div class="mb-3">
-                            {{ form_row(registrationForm.email, {
-                                'attr': {'class': 'form-control'}
-                            }) }}
-                        </div>
+    <!-- Messages d'erreur du formulaire -->
+    {% if registrationForm.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            {{ form_errors(registrationForm) }}
+        </div>
+    {% endif %}
 
-                        {# Nom et Prénom sur la même ligne #}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(registrationForm.nom, {
-                                    'label': 'Nom',
-                                    'attr': {'class': 'form-control'}
-                                }) }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                {{ form_row(registrationForm.prenom, {
-                                    'label': 'Prénom',
-                                    'attr': {'class': 'form-control'}
-                                }) }}
-                            </div>
-                        </div>
+    <!-- Formulaire d'inscription -->
+    {{ form_start(registrationForm, {'attr': {'class': 'mt-4'}}) }}
+        
+        <!-- Email -->
+        <div class="mb-3">
+            {{ form_label(registrationForm.email, null, {
+                'label_attr': {'class': 'form-label'}
+            }) }}
+            {{ form_widget(registrationForm.email, {
+                'attr': {
+                    'class': 'form-control form-control-lg',
+                    'placeholder': 'votre@email.com'
+                }
+            }) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
 
-                        {# Groupe Sanguin #}
-                        <div class="mb-3">
-                            {{ form_row(registrationForm.groupeSanguin, {
-                                'label': 'Groupe Sanguin',
-                                'attr': {'class': 'form-select'}
-                            }) }}
-                        </div>
-
-                        {# Mot de passe #}
-                        <div class="mb-3">
-                            {{ form_row(registrationForm.plainPassword, {
-                                'label': 'Mot de passe',
-                                'attr': {'class': 'form-control'}
-                            }) }}
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 btn-lg">S'inscrire</button>
-                    {{ form_end(registrationForm) }}
-                </div>
+        <!-- Nom et Prénom -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form_label(registrationForm.nom, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_widget(registrationForm.nom, {
+                    'attr': {
+                        'class': 'form-control form-control-lg',
+                        'placeholder': 'Votre nom'
+                    }
+                }) }}
+                {{ form_errors(registrationForm.nom) }}
             </div>
-            <div class="text-center mt-3">
-                <a href="{{ path('app_login') }}">J'ai déjà un compte</a>
+            <div class="col-md-6 mb-3">
+                {{ form_label(registrationForm.prenom, null, {
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+                {{ form_widget(registrationForm.prenom, {
+                    'attr': {
+                        'class': 'form-control form-control-lg',
+                        'placeholder': 'Votre prénom'
+                    }
+                }) }}
+                {{ form_errors(registrationForm.prenom) }}
             </div>
         </div>
+
+        <!-- Groupe Sanguin -->
+        <div class="mb-3">
+            {{ form_label(registrationForm.groupeSanguin, null, {
+                'label_attr': {'class': 'form-label'}
+            }) }}
+            {{ form_widget(registrationForm.groupeSanguin, {
+                'attr': {
+                    'class': 'form-select form-select-lg'
+                }
+            }) }}
+            {{ form_errors(registrationForm.groupeSanguin) }}
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="mb-3">
+            {{ form_label(registrationForm.plainPassword, null, {
+                'label_attr': {'class': 'form-label'}
+            }) }}
+            {{ form_widget(registrationForm.plainPassword, {
+                'attr': {
+                    'class': 'form-control form-control-lg',
+                    'placeholder': 'Minimum 6 caractères'
+                }
+            }) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+            <small class="form-text text-muted">Le mot de passe doit contenir au moins 6 caractères.</small>
+        </div>
+
+        <!-- Conditions d'utilisation -->
+        <div class="mb-3">
+            {{ form_widget(registrationForm.agreeTerms, {
+                'attr': {'class': 'form-check-input'}
+            }) }}
+            {{ form_label(registrationForm.agreeTerms, null, {
+                'label_attr': {'class': 'form-check-label'}
+            }) }}
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+
+        <!-- Bouton de soumission -->
+        <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-danger btn-lg">
+                <i class="bi bi-person-plus"></i> Créer mon compte
+            </button>
+        </div>
+
+    {{ form_end(registrationForm) }}
+
+    <!-- Lien vers la connexion -->
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="text-muted mb-0">
+            Déjà un compte ? 
+            <a href="{{ path('app_login') }}" class="text-decoration-none fw-bold">Se connecter</a>
+        </p>
+        <p class="mt-2 mb-0">
+            <a href="{{ path('app_Acceuil') }}" class="text-decoration-none">
+                <i class="bi bi-arrow-left"></i> Retour à l'accueil
+            </a>
+        </p>
     </div>
-</div>
 {% endblock %}

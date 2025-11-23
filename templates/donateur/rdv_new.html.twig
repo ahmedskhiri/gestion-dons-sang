@@ -1,0 +1,81 @@
+{% extends 'layouts/dashboard_layout.html.twig' %}
+
+{% block title %}Prendre un Rendez-vous{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-calendar-plus"></i> Prendre un Rendez-vous
+{% endblock %}
+
+{% block dashboard_content %}
+
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations de la Collecte</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong><i class="bi bi-tag"></i> Nom:</strong><br>
+                        <span class="ms-3">{{ collecte.nom }}</span>
+                    </p>
+                    <hr>
+                    <p class="card-text">
+                        <strong><i class="bi bi-geo-alt-fill"></i> Lieu:</strong><br>
+                        <span class="ms-3">
+                            {{ collecte.lieu.nomLieu }}<br>
+                            <small class="text-muted">
+                                {{ collecte.lieu.adresse }}<br>
+                                {{ collecte.lieu.ville }} {{ collecte.lieu.codePostal }}
+                            </small>
+                        </span>
+                    </p>
+                    <hr>
+                    <p class="card-text">
+                        <strong><i class="bi bi-calendar-range"></i> Période:</strong><br>
+                        <small class="ms-3">
+                            <strong>Début:</strong> {{ collecte.dateDebut|date('d/m/Y à H:i') }}<br>
+                            <strong>Fin:</strong> {{ collecte.dateFin|date('d/m/Y à H:i') }}
+                        </small>
+                    </p>
+                    <p class="card-text">
+                        <strong><i class="bi bi-people"></i> Capacité:</strong> 
+                        <span class="badge bg-info">{{ collecte.capaciteMaximale }} personnes</span>
+                    </p>
+                    <span class="badge bg-{{ collecte.statut == 'Planifiée' ? 'primary' : 'secondary' }}">
+                        {{ collecte.statut }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Choisir la date et l'heure</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.dateHeureDebut, null, {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.dateHeureDebut, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.dateHeureDebut) }}
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            <small>Votre rendez-vous durera 1 heure à partir de l'heure choisie. Assurez-vous que l'heure choisie est dans la plage horaire de la collecte.</small>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('app_collectes_liste') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Confirmer le rendez-vous
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock dashboard_content %}

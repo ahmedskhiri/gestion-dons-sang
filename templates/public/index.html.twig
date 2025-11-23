@@ -1,60 +1,144 @@
-{# templates/public/index.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'layouts/public_layout.html.twig' %}
 
 {% block title %}Accueil - Gestion des Dons de Sang{% endblock %}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+{% block content %}
+<!-- Carrousel de Campagnes -->
+<div id="campaignCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#campaignCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="d-block w-100 bg-danger text-white text-center p-5" style="height: 300px;">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h1 class="display-4">Donnez votre sang, sauvez des vies</h1>
+                    <p class="lead">Chaque don compte. Rejoignez-nous dans cette mission solidaire.</p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-block w-100 bg-primary text-white text-center p-5" style="height: 300px;">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h1 class="display-4">Urgence : Stocks critiques</h1>
+                    <p class="lead">Votre don est plus que jamais nécessaire. Consultez notre baromètre des stocks.</p>
+                    <a href="{{ path('app_stocks') }}" class="btn btn-light btn-lg mt-3">Voir les stocks</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-block w-100 bg-success text-white text-center p-5" style="height: 300px;">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h1 class="display-4">Prochaines collectes</h1>
+                    <p class="lead">Trouvez une collecte près de chez vous et prenez rendez-vous.</p>
+                    <a href="{{ path('app_collectes_liste') }}" class="btn btn-light btn-lg mt-3">Voir les collectes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#campaignCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#campaignCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
 
-<div class="example-wrapper">
-    <h1>Bienvenue sur le site de Gestion des Dons de Sang !</h1>
-
-    {# Le PDF demande un Carrousel, on le met en placeholder pour l'instant #}
-    <div class="alert alert-info" role="alert">
-      [ICI : Carrousel de campagnes]
+<div class="container">
+    <!-- Liens d'action rapide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-4">Actions rapides</h3>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        {% if not app.user %}
+                            <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus"></i> Inscription
+                            </a>
+                            <a href="{{ path('app_login') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_donateur_dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-speedometer2"></i> Mon Tableau de Bord
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('app_stocks') }}" class="btn btn-danger btn-lg">
+                            <i class="bi bi-heart-pulse"></i> Baromètre des Stocks
+                        </a>
+                        <a href="{{ path('app_collectes_liste') }}" class="btn btn-info btn-lg">
+                            <i class="bi bi-calendar-event"></i> Voir toutes les Collectes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {# Le PDF demande des liens clairs #}
-    <div class="mb-3">
-        <a href="{{ path('app_register') }}" class="btn btn-primary">Inscription</a>
-        <a href="{{ path('app_login') }}" class="btn btn-secondary">Connexion</a>
-        <a href="{{ path('app_stocks') }}" class="btn btn-danger">Voir les Stocks</a> {# On prépare le lien pour la future page /stocks #}
-        <a href="{{ path('app_collectes_liste') }}" class="btn btn-info">Voir toutes les collectes</a>
-    </div>
-
-    <hr>
-
-    {# Le PDF demande les prochaines collectes sous forme de Cards #}
-    <h2>Prochaines Collectes</h2>
-    
-    <div class="row">
-        {# On fait une boucle sur les collectes envoyées par le contrôleur #}
+    <!-- Prochaines Collectes -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Prochaines Collectes</h2>
+        </div>
         {% for collecte in collectes %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">{{ collecte.nom }}</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ collecte.nom }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            Statut : {{ collecte.statut }}
-                        </h6>
                         <p class="card-text">
-                            <strong>Lieu :</strong> {{ collecte.lieu.nomLieu }} ({{ collecte.lieu.ville }}) <br>
-                            <strong>Début :</strong> {{ collecte.dateDebut|date('d/m/Y H:i') }} <br>
-                            <strong>Fin :</strong> {{ collecte.dateFin|date('d/m/Y H:i') }}
+                            <strong><i class="bi bi-geo-alt"></i> Lieu:</strong><br>
+                            {{ collecte.lieu.nomLieu }}<br>
+                            <small class="text-muted">{{ collecte.lieu.ville }} ({{ collecte.lieu.codePostal }})</small>
                         </p>
-                        <a href="#" class="btn btn-success">Prendre RDV</a>
+                        <hr>
+                        <p class="card-text">
+                            <strong><i class="bi bi-calendar"></i> Date:</strong><br>
+                            <small>
+                                Début: {{ collecte.dateDebut|date('d/m/Y à H:i') }}<br>
+                                Fin: {{ collecte.dateFin|date('d/m/Y à H:i') }}
+                            </small>
+                        </p>
+                        <p class="card-text">
+                            <strong><i class="bi bi-people"></i> Capacité:</strong> {{ collecte.capaciteMaximale }} personnes
+                        </p>
+                        <span class="badge bg-{{ collecte.statut == 'Planifiée' ? 'primary' : 'secondary' }} mb-3">
+                            {{ collecte.statut }}
+                        </span>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        {% if is_granted('ROLE_DONATEUR') %}
+                            <a href="{{ path('app_donateur_rdv_new', {'collecteId': collecte.id}) }}" class="btn btn-success w-100">
+                                <i class="bi bi-calendar-check"></i> Prendre Rendez-vous
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-primary w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Se connecter pour réserver
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         {% else %}
             <div class="col-12">
-                <p>Aucune collecte planifiée pour le moment.</p>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucune collecte planifiée pour le moment.
+                </div>
             </div>
         {% endfor %}
     </div>
 
+    <!-- Lien vers toutes les collectes -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ path('app_collectes_liste') }}" class="btn btn-outline-primary btn-lg">
+                Voir toutes les collectes <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
 </div>
-{% endblock %}
+{% endblock content %}

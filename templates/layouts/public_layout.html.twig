@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!-- Navbar simple pour l'espace public -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_Acceuil') }}">
+            <i class="bi bi-heart-pulse-fill"></i> Gestion des Dons de Sang
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_Acceuil') }}">
+                        <i class="bi bi-house"></i> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_collectes_liste') }}">
+                        <i class="bi bi-calendar-event"></i> Collectes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_stocks') }}">
+                        <i class="bi bi-heart-pulse"></i> Baromètre des Stocks
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> {{ app.user.email }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if is_granted('ROLE_DONATEUR') %}
+                                <li><a class="dropdown-item" href="{{ path('app_donateur_dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Mon Tableau de Bord
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a class="dropdown-item" href="{{ path('app_admin_dashboard') }}">
+                                    <i class="bi bi-shield-check"></i> Administration
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{{ path('app_logout') }}">
+                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}">
+                            <i class="bi bi-person-plus"></i> Inscription
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenu principal -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer optionnel -->
+<footer class="bg-light text-center text-muted py-3 mt-5">
+    <div class="container">
+        <p class="mb-0">&copy; {{ "now"|date("Y") }} Gestion des Dons de Sang. Tous droits réservés.</p>
+    </div>
+</footer>
+{% endblock %}
+

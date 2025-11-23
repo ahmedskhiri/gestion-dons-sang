@@ -1,14 +1,19 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block title %}Détails de la Collecte{% endblock %}
 
-{% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Détails de la Collecte</h1>
-    <div>
-        <a href="{{ path('app_admin_collecte_edit', {'id': collecte.id}) }}" class="btn btn-warning">Modifier</a>
-        <a href="{{ path('app_admin_collecte_index') }}" class="btn btn-secondary">Retour à la liste</a>
-    </div>
+{% block page_title %}
+    <i class="bi bi-info-circle"></i> Détails de la Collecte
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('app_admin_collecte_edit', {'id': collecte.id}) }}" class="btn btn-warning me-2">
+        <i class="bi bi-pencil-square"></i> Modifier
+    </a>
+    <a href="{{ path('app_admin_collecte_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
 </div>
 
 <div class="card">
@@ -55,5 +60,5 @@
         </table>
     </div>
 </div>
-{% endblock %}
+{% endblock dashboard_content %}
 

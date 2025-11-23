@@ -1,74 +1,7 @@
-{% extends 'base.html.twig' %}
+{# Ce fichier est maintenant obsolète - utilisez layouts/dashboard_layout.html.twig à la place #}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
-{% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-            <div class="position-sticky pt-3">
-                <div class="text-center text-white mb-4">
-                    <h4>Administration</h4>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}" href="{{ path('app_admin_dashboard') }}">
-                            <i class="bi bi-speedometer2"></i> Tableau de bord
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ 'app_admin_lieu' in app.request.get('_route') ? 'active' : '' }}" href="{{ path('app_admin_lieu_index') }}">
-                            <i class="bi bi-geo-alt"></i> Gestion des Lieux
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ 'app_admin_collecte' in app.request.get('_route') ? 'active' : '' }}" href="{{ path('app_admin_collecte_index') }}">
-                            <i class="bi bi-calendar-event"></i> Gestion des Collectes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ 'app_admin_stock' in app.request.get('_route') ? 'active' : '' }}" href="{{ path('app_admin_stock_index') }}">
-                            <i class="bi bi-box-seam"></i> Gestion des Stocks
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ 'app_admin_don' in app.request.get('_route') ? 'active' : '' }}" href="{{ path('app_admin_don_valider') }}">
-                            <i class="bi bi-check-circle"></i> Validation des Dons
-                        </a>
-                    </li>
-                    <li class="nav-item mt-3">
-                        <a class="nav-link text-white" href="{{ path('app_Acceuil') }}">
-                            <i class="bi bi-house"></i> Retour à l'accueil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ path('app_logout') }}">
-                            <i class="bi bi-box-arrow-right"></i> Déconnexion
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-</div>
-
-<style>
-    #sidebar {
-        min-height: 100vh;
-    }
-    .nav-link {
-        padding: 0.75rem 1rem;
-    }
-    .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-    .nav-link.active {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-</style>
+{% block dashboard_content %}
+    {% block content %}{% endblock %}
 {% endblock %}
 

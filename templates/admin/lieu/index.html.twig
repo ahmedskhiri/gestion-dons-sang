@@ -1,11 +1,17 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block title %}Gestion des Lieux{% endblock %}
 
-{% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Gestion des Lieux</h1>
-    <a href="{{ path('app_admin_lieu_new') }}" class="btn btn-primary">Nouveau Lieu</a>
+{% block page_title %}
+    <i class="bi bi-geo-alt"></i> Gestion des Lieux
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+    <div></div>
+    <a href="{{ path('app_admin_lieu_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nouveau Lieu
+    </a>
 </div>
 
 {% for message in app.flashes('success') %}
@@ -54,5 +60,5 @@
         </table>
     </div>
 </div>
-{% endblock %}
+{% endblock dashboard_content %}
 

@@ -1,11 +1,17 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block title %}Gestion des Collectes{% endblock %}
 
-{% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Gestion des Collectes</h1>
-    <a href="{{ path('app_admin_collecte_new') }}" class="btn btn-primary">Nouvelle Collecte</a>
+{% block page_title %}
+    <i class="bi bi-calendar-event"></i> Gestion des Collectes
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+    <div></div>
+    <a href="{{ path('app_admin_collecte_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nouvelle Collecte
+    </a>
 </div>
 
 {% for message in app.flashes('success') %}
@@ -62,5 +68,5 @@
         </table>
     </div>
 </div>
-{% endblock %}
+{% endblock dashboard_content %}
 

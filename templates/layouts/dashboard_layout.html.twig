@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            <div class="position-sticky pt-3">
+                <!-- Logo/Brand -->
+                <div class="text-center text-white mb-4 pb-3 border-bottom">
+                    <h4 class="mb-0">
+                        <i class="bi bi-heart-pulse-fill text-danger"></i>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            Administration
+                        {% else %}
+                            Espace Donateur
+                        {% endif %}
+                    </h4>
+                </div>
+
+                <!-- Menu de navigation -->
+                <ul class="nav flex-column">
+                    {% block sidebar_menu %}
+                        {% if is_granted('ROLE_DONATEUR') and not is_granted('ROLE_ADMIN') %}
+                            {# Menu Donateur #}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ app.request.get('_route') == 'app_donateur_dashboard' ? 'active' : '' }}" 
+                                   href="{{ path('app_donateur_dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Tableau de Bord
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ 'app_collectes_liste' in app.request.get('_route') ? 'active' : '' }}" 
+                                   href="{{ path('app_collectes_liste') }}">
+                                    <i class="bi bi-calendar-event"></i> Prendre un RDV
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ app.request.get('_route') == 'app_donateur_historique' ? 'active' : '' }}" 
+                                   href="{{ path('app_donateur_historique') }}">
+                                    <i class="bi bi-clock-history"></i> Historique des Dons
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {# Menu Admin #}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}" 
+                                   href="{{ path('app_admin_dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Tableau de Bord
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ 'app_admin_lieu' in app.request.get('_route') ? 'active' : '' }}" 
+                                   href="{{ path('app_admin_lieu_index') }}">
+                                    <i class="bi bi-geo-alt"></i> Gestion des Lieux
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ 'app_admin_collecte' in app.request.get('_route') ? 'active' : '' }}" 
+                                   href="{{ path('app_admin_collecte_index') }}">
+                                    <i class="bi bi-calendar-event"></i> Gestion des Collectes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ 'app_admin_stock' in app.request.get('_route') ? 'active' : '' }}" 
+                                   href="{{ path('app_admin_stock_index') }}">
+                                    <i class="bi bi-box-seam"></i> Gestion des Stocks
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ 'app_admin_don' in app.request.get('_route') ? 'active' : '' }}" 
+                                   href="{{ path('app_admin_don_valider') }}">
+                                    <i class="bi bi-check-circle"></i> Validation des Dons
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {# Menu commun #}
+                        <li class="nav-item mt-3 pt-3 border-top">
+                            <a class="nav-link text-white" href="{{ path('app_Acceuil') }}">
+                                <i class="bi bi-house"></i> Retour à l'accueil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ path('app_stocks') }}">
+                                <i class="bi bi-heart-pulse"></i> Baromètre des Stocks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ path('app_logout') }}">
+                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            </a>
+                        </li>
+                    {% endblock %}
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Zone de contenu principale -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Top bar avec toggle pour mobile -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <button class="btn btn-link d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1 class="h2">{% block page_title %}{% endblock %}</h1>
+            </div>
+
+            <!-- Flash messages -->
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('warning') %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('info') %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-info-circle"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            <!-- Contenu du dashboard -->
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<style>
+    #sidebar {
+        min-height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+    .sidebar .nav-link {
+        padding: 0.75rem 1rem;
+        color: rgba(255, 255, 255, 0.75);
+        transition: all 0.3s;
+    }
+    .sidebar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    .sidebar .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-weight: 600;
+    }
+    .sidebar .nav-link i {
+        margin-right: 0.5rem;
+        width: 20px;
+    }
+    @media (max-width: 767.98px) {
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+        #sidebar.show {
+            transform: translateX(0);
+        }
+    }
+</style>
+{% endblock %}
+

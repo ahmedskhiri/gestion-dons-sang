@@ -5,12 +5,14 @@ namespace App\Controller;
 
 use App\Entity\Collecte;
 use App\Entity\RendezVous;
+use App\Form\RendezVousType;
 use App\Repository\DonRepository;
 use App\Repository\CollecteRepository;
 use App\Repository\RendezVousRepository;
 use App\Service\DonationEligibilityService; // <-- N'oubliez pas cette ligne
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -39,12 +41,12 @@ final class DonateurController extends AbstractController
         // 1. Calcul d'éligibilité
         $eligibility = $this->eligibilityService->calculateNextEligibleDate($donateur);
 
-        // 2. Recherche du prochain rendez-vous
+        // 2. Recherche du prochain rendez-vous (seulement avec statut 'Confirmé')
         $nextRendezVous = $rendezVousRepository->createQueryBuilder('r')
             ->where('r.donateur = :donateur')
-            ->andWhere('r.statut IN (:statuts_actifs)') 
+            ->andWhere('r.statut = :statut') 
             ->setParameter('donateur', $donateur->getId())
-            ->setParameter('statuts_actifs', ['Confirmé', 'Planifié'])
+            ->setParameter('statut', 'Confirmé')
             ->orderBy('r.dateHeureDebut', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
@@ -62,6 +64,7 @@ final class DonateurController extends AbstractController
      */
     #[Route('/rdv/{id}/cancel', name: 'rdv_cancel', methods: ['POST'])]
     public function cancelRendezVous(
+        Request $request,
         RendezVous $rendezVous,
         EntityManagerInterface $entityManager
     ): Response {
@@ -72,8 +75,14 @@ final class DonateurController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $rendezVous->setStatut('Annulé');
-        $entityManager->flush();
+        // CSRF protection
+        if ($this->isCsrfTokenValid('delete'.$rendezVous->getId(), $request->request->get('_token'))) {
+            $rendezVous->setStatut('Annulé');
+            $entityManager->flush();
+            $this->addFlash('success', 'Votre rendez-vous a été annulé avec succès.');
+        } else {
+            $this->addFlash('danger', 'Token de sécurité invalide.');
+        }
 
         $this->addFlash('success', 'Votre rendez-vous a été annulé avec succès.');
 
@@ -99,8 +108,9 @@ final class DonateurController extends AbstractController
     /**
      * Prise de Rendez-vous.
      */
-    #[Route('/rdv/new/{collecteId}', name: 'rdv_new')]
+    #[Route('/rdv/new/{collecteId}', name: 'rdv_new', methods: ['GET', 'POST'])]
     public function newRendezVous(
+        Request $request,
         int $collecteId,
         EntityManagerInterface $entityManager
     ): Response {
@@ -119,23 +129,36 @@ final class DonateurController extends AbstractController
              return $this->redirectToRoute('app_donateur_dashboard');
         }
         
-        // 2. Création du RendezVous
+        // 2. Création du RendezVous avec form
         $rendezVous = new RendezVous();
         $rendezVous->setDonateur($donateur);
         $rendezVous->setCollecte($collecte);
-        
-        // Créneau de 1h
+        // Set default date to collecte start date
         $rendezVous->setDateHeureDebut($collecte->getDateDebut());
-        $end = clone $collecte->getDateDebut();
-        $end->add(new \DateInterval('PT1H')); 
-        $rendezVous->setDateHeureFin($end);
-        $rendezVous->setStatut('Planifiée'); // Changé à 'Planifiée' pour plus de précision
+        
+        $form = $this->createForm(RendezVousType::class, $rendezVous, [
+            'default_date' => $collecte->getDateDebut(),
+        ]);
+        $form->handleRequest($request);
 
-        $entityManager->persist($rendezVous);
-        $entityManager->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Calculate dateHeureFin (1 hour after dateHeureDebut)
+            $end = clone $rendezVous->getDateHeureDebut();
+            $end->add(new \DateInterval('PT1H')); 
+            $rendezVous->setDateHeureFin($end);
+            $rendezVous->setStatut('Confirmé');
 
-        $this->addFlash('success', 'Votre rendez-vous a été pris pour la collecte ' . $collecte->getNom() . '.');
+            $entityManager->persist($rendezVous);
+            $entityManager->flush();
 
-        return $this->redirectToRoute('app_donateur_dashboard');
+            $this->addFlash('success', 'Votre rendez-vous a été pris pour la collecte ' . $collecte->getNom() . '.');
+
+            return $this->redirectToRoute('app_donateur_dashboard');
+        }
+
+        return $this->render('donateur/rdv_new.html.twig', [
+            'form' => $form,
+            'collecte' => $collecte,
+        ]);
     }
 }

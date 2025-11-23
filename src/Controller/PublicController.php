@@ -15,12 +15,20 @@ final class PublicController extends AbstractController
     #[Route('/', name: 'app_Acceuil')]
     public function index(CollecteRepository $collecteRepository): Response
     {
-        $collectes = $collecteRepository->findAll();
+        // Récupérer les prochaines collectes (statut Planifiée, date future)
+        $now = new \DateTime();
+        $collectes = $collecteRepository->createQueryBuilder('c')
+            ->where('c.statut = :statut')
+            ->andWhere('c.dateDebut >= :now')
+            ->setParameter('statut', 'Planifiée')
+            ->setParameter('now', $now)
+            ->orderBy('c.dateDebut', 'ASC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
 
-        // 2. On envoie les collectes au template (la vue)
         return $this->render('public/index.html.twig', [
-            'controller_name' => 'PublicController',
-            'collectes' => $collectes, // On ajoute cette ligne
+            'collectes' => $collectes,
         ]);
     }
     #[Route('/stocks', name: 'app_stocks')]
@@ -40,27 +48,58 @@ final class PublicController extends AbstractController
         LieuRepository $lieuRepository,
         Request $request
     ): Response {
-        
-        // 2. Récupérer le filtre (on filtre par l'ID du lieu)
+        // Récupérer les filtres
         $lieuId = $request->query->get('lieu');
+        $dateDebut = $request->query->get('date_debut');
+        $dateFin = $request->query->get('date_fin');
+        $ville = $request->query->get('ville');
 
-        $collectes = [];
-        
+        // Construction de la requête avec filtres
+        $qb = $collecteRepository->createQueryBuilder('c')
+            ->leftJoin('c.lieu', 'l')
+            ->where('c.statut = :statut')
+            ->setParameter('statut', 'Planifiée');
+
         if ($lieuId) {
-            // 3. Si un filtre est actif, on cherche par 'lieu'
-            $collectes = $collecteRepository->findBy(['lieu' => $lieuId]);
-        } else {
-            // 3. Sinon, on les prend toutes
-            $collectes = $collecteRepository->findAll();
+            $qb->andWhere('c.lieu = :lieuId')
+               ->setParameter('lieuId', $lieuId);
         }
 
-        // 4. On récupère tous les lieux pour le menu déroulant
+        if ($ville) {
+            $qb->andWhere('l.ville LIKE :ville')
+               ->setParameter('ville', '%' . $ville . '%');
+        }
+
+        if ($dateDebut) {
+            $qb->andWhere('c.dateDebut >= :dateDebut')
+               ->setParameter('dateDebut', new \DateTime($dateDebut));
+        }
+
+        if ($dateFin) {
+            $qb->andWhere('c.dateFin <= :dateFin')
+               ->setParameter('dateFin', new \DateTime($dateFin));
+        }
+
+        $collectes = $qb->orderBy('c.dateDebut', 'ASC')
+                        ->getQuery()
+                        ->getResult();
+
+        // Récupérer tous les lieux et villes uniques pour les filtres
         $lieux = $lieuRepository->findAll();
+        $villes = $lieuRepository->createQueryBuilder('l')
+            ->select('DISTINCT l.ville')
+            ->orderBy('l.ville', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('public/liste_collectes.html.twig', [
             'collectes' => $collectes,
-            'lieux' => $lieux, // On envoie les lieux au template
-            'lieuFiltreId' => $lieuId // On envoie l'ID sélectionné
+            'lieux' => $lieux,
+            'villes' => array_column($villes, 'ville'),
+            'lieuFiltreId' => $lieuId,
+            'villeFiltre' => $ville,
+            'dateDebutFiltre' => $dateDebut,
+            'dateFinFiltre' => $dateFin,
         ]);
     }
 }

@@ -1,64 +1,140 @@
-{# templates/public/stocks.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'layouts/public_layout.html.twig' %}
 
 {% block title %}Baromètre des Stocks{% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="container mt-4">
-    <h1>Baromètre des Stocks</h1>
-    <p>État actuel des réserves de sang.</p>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="bi bi-heart-pulse-fill text-danger"></i> Baromètre des Stocks</h1>
+            <p class="lead">État actuel des réserves de sang par groupe sanguin</p>
+        </div>
+    </div>
 
-    <table class="table table-striped table-responsive">
-        <thead class="thead-dark">
-            <tr>
-                <th>Groupe Sanguin</th>
-                <th>Niveau Actuel (unités)</th>
-                <th>Visualisation</th>
-                <th>Niveau d'Alerte</th>
-                <th>Dernière MàJ</th>
-            </tr>
-        </thead>
-        <tbody>
-            {# On boucle sur les stocks envoyés par le contrôleur #}
-            {% for stock in stocks %}
-                <tr>
-                    <td class="font-weight-bold">{{ stock.groupeSanguin }}</td>
-                    <td>{{ stock.niveauActuel }}</td>
-                    
-                    {# Partie pour les Progress Bars  #}
-                    <td>
-                        {% set pourcentage = (stock.niveauActuel / stock.niveauAlerte) * 50 %}
-                        {% set couleur = 'success' %} {# Vert par défaut #}
-                        
-                        {% if pourcentage < 100 %}
-                            {% set couleur = 'warning' %} {# Jaune #}
-                        {% endif %}
-                        {% if pourcentage < 50 %}
-                            {% set couleur = 'danger' %} {# Rouge #}
-                        {% endif %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Groupe Sanguin</th>
+                            <th>Niveau Actuel</th>
+                            <th>Niveau d'Alerte</th>
+                            <th>Statut</th>
+                            <th>Visualisation</th>
+                            <th>Dernière Mise à Jour</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks %}
+                            {% set pourcentage = (stock.niveauActuel / stock.niveauAlerte) * 100 %}
+                            {% set ratio = stock.niveauActuel / stock.niveauAlerte %}
+                            
+                            {# Détermination de la couleur et du statut #}
+                            {% if ratio < 1 %}
+                                {% set couleur = 'danger' %}
+                                {% set statut = 'Critique' %}
+                                {% set badgeColor = 'danger' %}
+                            {% elseif ratio < 1.5 %}
+                                {% set couleur = 'warning' %}
+                                {% set statut = 'Attention' %}
+                                {% set badgeColor = 'warning' %}
+                            {% else %}
+                                {% set couleur = 'success' %}
+                                {% set statut = 'Normal' %}
+                                {% set badgeColor = 'success' %}
+                            {% endif %}
 
-                        <div class="progress">
-                            <div class="progress-bar bg-{{ couleur }}" 
-                                 role="progressbar" 
-                                 style="width: {{ min(pourcentage, 100) }}%" 
-                                 aria-valuenow="{{ pourcentage }}" 
-                                 aria-valuemin="0" 
-                                 aria-valuemax="100">
-                            </div>
+                            <tr>
+                                <td>
+                                    <strong class="fs-5">{{ stock.groupeSanguin }}</strong>
+                                </td>
+                                <td>
+                                    <span class="fs-5 fw-bold">{{ stock.niveauActuel }}</span> <small class="text-muted">ml</small>
+                                </td>
+                                <td>
+                                    <span class="text-muted">{{ stock.niveauAlerte }} ml</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ badgeColor }} fs-6">{{ statut }}</span>
+                                </td>
+                                <td style="min-width: 200px;">
+                                    <div class="progress" style="height: 30px;">
+                                        <div class="progress-bar bg-{{ couleur }} progress-bar-striped progress-bar-animated" 
+                                             role="progressbar" 
+                                             style="width: {{ min(pourcentage, 100) }}%" 
+                                             aria-valuenow="{{ stock.niveauActuel }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="{{ stock.niveauAlerte }}">
+                                            <span class="fw-bold">{{ pourcentage|number_format(1) }}%</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ stock.niveauActuel }} / {{ stock.niveauAlerte }} ml
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if stock.derniereMiseAJour %}
+                                        {{ stock.derniereMiseAJour|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i> Aucune donnée de stock disponible.
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Légende -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-info-circle"></i> Légende</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="progress me-3" style="width: 100px; height: 20px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
                         </div>
-                    </td>
+                        <span><strong>Normal</strong> : Niveau ≥ 150% du seuil d'alerte</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="progress me-3" style="width: 100px; height: 20px;">
+                            <div class="progress-bar bg-warning" style="width: 100%"></div>
+                        </div>
+                        <span><strong>Attention</strong> : Niveau entre 100% et 150% du seuil</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="progress me-3" style="width: 100px; height: 20px;">
+                            <div class="progress-bar bg-danger" style="width: 100%"></div>
+                        </div>
+                        <span><strong>Critique</strong> : Niveau < 100% du seuil d'alerte</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <td>{{ stock.niveauAlerte }}</td>
-                    <td>{{ stock.derniereMiseAJour|date('d/m/Y H:i') }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="text-center">Aucune donnée de stock disponible.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_Acceuil') }}" class="btn btn-primary">&larr; Retour à l'accueil</a>
+    <div class="mt-4">
+        <a href="{{ path('app_Acceuil') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à l'accueil
+        </a>
+    </div>
 </div>
-{% endblock %}
+{% endblock content %}

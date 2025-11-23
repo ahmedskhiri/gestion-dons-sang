@@ -1,25 +1,12 @@
-{% extends 'admin/base.html.twig' %}
+{% extends 'layouts/dashboard_layout.html.twig' %}
 
 {% block title %}Tableau de bord Admin{% endblock %}
 
-{% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Tableau de bord</h1>
-</div>
+{% block page_title %}
+    <i class="bi bi-speedometer2"></i> Tableau de bord Administration
+{% endblock %}
 
-<!-- Flash messages -->
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-{% endfor %}
-{% for message in app.flashes('danger') %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-{% endfor %}
+{% block dashboard_content %}
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
@@ -64,6 +51,5 @@
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+{% endblock dashboard_content %}
 
